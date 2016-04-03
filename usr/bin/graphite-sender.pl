@@ -24,9 +24,9 @@ Config::Simple->import_from($conf_file, \%conf);
 
 foreach my $i (keys %conf_default) {
     if (defined ($conf{"default.$i"})) {
-        $conf{"$i"} = $conf{"default.$i"};
+        $cfg{"$i"} = $conf{"default.$i"};
     } else {
-        $conf{"$i"} = $conf_default{"$i"}
+        $cfg{"$i"} = $conf_default{"$i"}
     }
 }
 
@@ -35,11 +35,11 @@ chomp($prefix);
 
 my $start_time = time();
 
-opendir(DIR, $conf{'script_dir'}) ||
-    die "Can't open dir $conf{'script_dir'}: $!\n";
+opendir(DIR, $cfg{'script_dir'}) ||
+    die "Can't open dir $cfg{'script_dir'}: $!\n";
 
 my @scripts = grep {
-    -f "$conf{'script_dir'}/$_" && -x "$conf{'script_dir'}/$_"
+    -f "$cfg{'script_dir'}/$_" && -x "$cfg{'script_dir'}/$_"
 } readdir(DIR);
 
 close(DIR);
@@ -48,7 +48,7 @@ my @points;
 
 foreach my $script (@scripts) {
     if (my $name = ($script =~ /^([\w\d_-]+).?[\w\d_-]*$/)[0]) {
-        open(OUT, "$conf{'script_dir'}/$script |") || next;
+        open(OUT, "$cfg{'script_dir'}/$script |") || next;
 
         while (<OUT>) {
             chomp;
@@ -65,8 +65,8 @@ socket(SOCK, PF_INET, SOCK_STREAM, getprotobyname('tcp'));
 
 my $addr;
 
-if (my $ip = inet_aton($conf{'host'})){
-    $addr = sockaddr_in($conf{'port'}, $ip);
+if (my $ip = inet_aton($cfg{'host'})){
+    $addr = sockaddr_in($cfg{'port'}, $ip);
 } else {
     $need_cache = 1;
 }
@@ -80,16 +80,16 @@ if ($need_cache == 0 && connect(SOCK, $addr)) {
     }
 
     if ($need_cache == 0) {
-        opendir(CACHE_DIR, $conf{'cache_dir'}) ||
-            die "Can't open dir $conf{'cache_dir'}: $!\n";
+        opendir(CACHE_DIR, $cfg{'cache_dir'}) ||
+            die "Can't open dir $cfg{'cache_dir'}: $!\n";
 
         my @cached = grep {
-            -f "$conf{'cache_dir'}/$_" && -e "$conf{'cache_dir'}/$_"
+            -f "$cfg{'cache_dir'}/$_" && -e "$cfg{'cache_dir'}/$_"
         } readdir(CACHE_DIR);
         close(CACHE_DIR);
 
         foreach my $cache (@cached) {
-            open(CACHE, '<', "$conf{'cache_dir'}/$cache") || next;
+            open(CACHE, '<', "$cfg{'cache_dir'}/$cache") || next;
             while (<CACHE>) {
                 print "   -> $_";
                 if (!send(SOCK, $_, 0)) {
@@ -98,7 +98,7 @@ if ($need_cache == 0 && connect(SOCK, $addr)) {
                 }
             }
             if ($not_sent_cache == 0) {
-                unlink("$conf{'cache_dir'}/$cache");
+                unlink("$cfg{'cache_dir'}/$cache");
             }
             close(CACHE);
         }
@@ -109,8 +109,8 @@ if ($need_cache == 0 && connect(SOCK, $addr)) {
 }
 
 if ($need_cache == 1) {
-    open(CACHE, '>', "$conf{'cache_dir'}/$start_time")
-        or die "Can't open file $conf{'cache_dir'}/$start_time: $!\n";
+    open(CACHE, '>', "$cfg{'cache_dir'}/$start_time")
+        or die "Can't open file $cfg{'cache_dir'}/$start_time: $!\n";
     print CACHE @points;
     close(CACHE);
 }
