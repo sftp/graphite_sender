@@ -6,7 +6,7 @@ use warnings;
 use v5.10;
 
 my $df = 'df |';
-    
+
 open(FD, $df) || die "Can't exec '$df': $!\n";
 
 my @F;
@@ -18,13 +18,13 @@ while (<FD>) {
     @F = split /\s+/;
 
     if ($F[1] =~ m/^\d+$/){
-	$p = $F[5];
-	$p =~ s!^/$!rootfs!;
-	$p =~ s!^/!!;
-	$p =~ s!/!_!g;
+        $p = $F[5];
+        $p =~ s!^/$!rootfs!;
+        $p =~ s!^/!!;
+        $p =~ s!/!_!g;
 
-	say "$p.used " . $F[2] * 1024;
-	say "$p.free " . $F[3] * 1024;
+        say "$p.used " . $F[2] * 1024;
+        say "$p.free " . $F[3] * 1024;
     }
 }
 

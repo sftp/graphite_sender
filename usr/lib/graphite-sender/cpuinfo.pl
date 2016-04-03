@@ -13,9 +13,9 @@ my $c;
 
 while (<FD>) {
     if (m/^processor\s+:\s+(\d+)/) {
-	$c="cpu$1";
+        $c="cpu$1";
     } elsif (m/^cpu MHz\s+:\s+(\d+.?\d*)/) {
-	say "MHz.$c $1";
+        say "MHz.$c $1";
     }
 }
 
