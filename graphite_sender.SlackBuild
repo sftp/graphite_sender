@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -e
+
+NAME='graphite_sender'
+
+ARCH='noarch'
+VERSION='0.1'
+BUILD=${BUILD:-1sftp}
+
+CWD=`pwd`
+TMP=${TMP:-/tmp}
+PKG=$TMP/$NAME-$VERSION
+
+OUTPUT=${OUTPUT:-$TMP}
+
+mkdir -p $PKG
+
+cd $PKG
+
+cp -a $CWD/* .
+
+mv slack-desc install/
+
+mkdir -p usr/doc/$NAME-$VERSION/
+mv graphite_sender.SlackBuild usr/doc/$NAME-$VERSION/
+cp install/* usr/doc/$NAME-$VERSION/
+
+makepkg -l y -c y $OUTPUT/$NAME-$VERSION-$ARCH-$BUILD.txz

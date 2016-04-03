@@ -1,0 +1,4 @@
+host = 'graphite'
+port = '2003'
+script_dir = '/usr/lib/graphite-sender/'
+cache_dir = '/var/cache/graphite-sender/'
